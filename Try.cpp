@@ -11,8 +11,9 @@ int main() {
                 window.close();
         }
 
-        window.clear(sf::Color::Red);
+        window.clear(sf::Color::Green);
         window.display();
     }
     return 0;
 }
+
