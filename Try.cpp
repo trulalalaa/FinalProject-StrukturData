@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
 
+using namespace sf;
+
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Test");
     while (window.isOpen()) {
@@ -9,7 +11,7 @@ int main() {
                 window.close();
         }
 
-        window.clear(sf::Color::Blue);
+        window.clear(sf::Color::Red);
         window.display();
     }
     return 0;
