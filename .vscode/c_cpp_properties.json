@@ -1,0 +1,33 @@
+// {
+//     "configurations": [
+//         {
+//             "name": "MinGW32",
+//             "includePath": [
+//                 "${workspaceFolder}/**",
+//                 "C:/SFML-3.0.2/include"
+//             ],
+//             "compilerPath": "C:/mingw32/bin/g++.exe",
+//             "cStandard": "c17",
+//             "cppStandard": "c++17",
+//             "intelliSenseMode": "windows-gcc-x64"
+//         }
+//     ],
+//     "version": 4
+// }
+
+{
+    "configurations": [
+        {
+            "name": "MinGW32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/SFML-3.0.2/include"
+            ],
+            "compilerPath": "C:/mingw32/bin/g++.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-x86"
+        }
+    ],
+    "version": 4
+}
