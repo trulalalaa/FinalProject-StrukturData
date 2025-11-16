@@ -6,6 +6,10 @@
 #include <iostream>
 #include <deque>
 
+// dos2unix main.cpp
+// g++ main.cpp -o bola_sfml -lsfml-graphics -lsfml-window -lsfml-system -std=c++17
+// ./bola_sfml
+
 struct Ball {
     sf::CircleShape shape;
     sf::Vector2f velocity;
@@ -14,8 +18,8 @@ struct Ball {
 
 const int WINDOW_WIDTH = 1600;
 const int WINDOW_HEIGHT = 1200;
-const float BALL_RADIUS = 30.0f;
-const int NUMBER_OF_BALLS = 20;
+const float BALL_RADIUS = 15.0f;
+const int NUMBER_OF_BALLS = 100;
 const float MAX_VELOCITY = 4.0f;
 const size_t TRAIL_LENGTH = 15;
 const float TRAIL_ALPHA_DECAY = 0.8f;
