@@ -8,6 +8,16 @@
 #include <iomanip>
 #include <sstream>
 
+
+const int WINDOW_WIDTH = 1200;
+const int WINDOW_HEIGHT = 800;
+const int BORDER_SIZE = 20;
+const int SIM_X = BORDER_SIZE;
+const int SIM_Y = BORDER_SIZE + 30;
+const int SIM_W = WINDOW_WIDTH - (BORDER_SIZE * 2);
+const int SIM_H = WINDOW_HEIGHT - (BORDER_SIZE + SIM_Y);
+
+
 struct Button
 {
     sf::RectangleShape shape;
@@ -185,14 +195,6 @@ struct Ball
     sf::Vector2f velocity;
 };
 
-const int WINDOW_WIDTH = 1200;
-const int WINDOW_HEIGHT = 900;
-const int BORDER_SIZE = 20;
-const int SIM_X = BORDER_SIZE;
-const int SIM_Y = BORDER_SIZE + 30;
-const int SIM_W = WINDOW_WIDTH - (BORDER_SIZE * 2);
-const int SIM_H = WINDOW_HEIGHT - (BORDER_SIZE + SIM_Y);
-
 const float BALL_RADIUS = 5.0f;
 const std::string FONT_PATH = "arial.ttf";
 
@@ -256,6 +258,29 @@ public:
         {
             nw->query(range, found); ne->query(range, found);
             sw->query(range, found); se->query(range, found);
+        }
+    }
+
+    // --- FITUR BARU: Menggambar Grid ---
+    void draw(sf::RenderWindow& window)
+    {
+        sf::RectangleShape rectShape;
+        // x, y di struct Rect adalah titik tengah, SFML butuh top-left
+        rectShape.setPosition(boundary.x - boundary.w, boundary.y - boundary.h);
+        rectShape.setSize({boundary.w * 2, boundary.h * 2});
+        
+        rectShape.setFillColor(sf::Color::Transparent);
+        rectShape.setOutlineColor(sf::Color(0, 255, 0, 150)); // Hijau semi-transparan
+        rectShape.setOutlineThickness(1.0f);
+        
+        window.draw(rectShape);
+
+        if (divided)
+        {
+            nw->draw(window);
+            ne->draw(window);
+            sw->draw(window);
+            se->draw(window);
         }
     }
 };
@@ -363,7 +388,7 @@ int main()
     Slider speedSlider(240, 15, 0.0f, 5.0f, 1.0f, "Simulation Speed", font);
     Button gravityBtn(240, 30, "Gravity: OFF", font);
 
-    sf::Text toggleText("[SPACE] Mode: Brute Force", font, 12);
+    sf::Text toggleText("[SPACE] Mode: Brute Force\n[G] Show Grid (Quadtree only)", font, 12);
     toggleText.setFillColor(sf::Color(180, 180, 180));
     sf::Text fpsText("FPS: 0", font, 12);
     fpsText.setFillColor(sf::Color::Green);
@@ -386,6 +411,7 @@ int main()
     adjustBallCount(balls, (int)ballSlider.currentValue, pastelColors);
 
     bool useQuadtree = false;
+    bool showGrid = false; // Variable baru untuk grid
     bool isDraggingWindow = false;
     bool isDraggingPanel = false;
     bool isPanelMinimized = false;
@@ -416,7 +442,7 @@ int main()
                 gravityBtn.setPosition(panelPos.x + 20, startContentY + 100);
 
                 toggleText.setPosition(panelPos.x + 20, startContentY + 150);
-                fpsText.setPosition(panelPos.x + 20, startContentY + 170);
+                fpsText.setPosition(panelPos.x + 20, startContentY + 190);
             }
 
             if (btnMinimize.handleEvent(event, window))
@@ -489,11 +515,22 @@ int main()
                 }
             }
 
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space)
+            if (event.type == sf::Event::KeyPressed)
             {
-                useQuadtree = !useQuadtree;
-                toggleText.setString(useQuadtree ? "[SPACE] Mode: Quadtree" : "[SPACE] Mode: Brute Force");
-                toggleText.setFillColor(useQuadtree ? sf::Color::Cyan : sf::Color(180, 180, 180));
+                if (event.key.code == sf::Keyboard::Space) {
+                    useQuadtree = !useQuadtree;
+                    std::string gridStatus = showGrid ? " (Grid ON)" : "";
+                    toggleText.setString(useQuadtree ? "[SPACE] Mode: Quadtree" + gridStatus + "\n[G] Show Grid" : "[SPACE] Mode: Brute Force\n");
+                    toggleText.setFillColor(useQuadtree ? sf::Color::Cyan : sf::Color(180, 180, 180));
+                }
+                else if (event.key.code == sf::Keyboard::G) {
+                    showGrid = !showGrid;
+                    // Update text langsung saat toggle grid
+                    if(useQuadtree) {
+                         std::string gridStatus = showGrid ? " (Grid ON)" : "";
+                         toggleText.setString("[SPACE] Mode: Quadtree" + gridStatus + "\n[G] Show Grid");
+                    }
+                }
             }
         }
 
@@ -553,6 +590,7 @@ int main()
             }
         }
 
+        // Logic collision
         if (!useQuadtree)
         {
             for (size_t i = 0; i < balls.size(); ++i)
@@ -579,7 +617,18 @@ int main()
 
         window.clear(sf::Color(30, 30, 30));
         window.draw(simArea);
+        
+        // Render Balls
         for (const auto& ball : balls) window.draw(ball.shape);
+
+        // Render Grid (Quadtree) jika aktif
+        if (useQuadtree && showGrid) {
+            Rect boundary = {WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f, WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f};
+            Quadtree qt(boundary, 4);
+            for (size_t i = 0; i < balls.size(); ++i) qt.insert(i, balls);
+            
+            qt.draw(window);
+        }
 
         window.draw(panelBg);
         window.draw(panelHeader);
