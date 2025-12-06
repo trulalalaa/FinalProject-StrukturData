@@ -1,5 +1,13 @@
 # Simulasi Partikel dengan menggunakan Brute Force dan QuadTree
 
+# Simulasi Partikel dengan menggunakan Brute Force dan QuadTree
+
+![Preview Simulasi](bola.jpeg) 
+*(Caption: Visualisasi kode saat dijalankan)*
+
+<p align="justify">
+Proyek ini adalah simulasi partikel 2D interaktif...
+
 <p align="justify">
 Proyek ini adalah simulasi partikel 2D interaktif yang dibangun menggunakan C++ dan SFML. Tujuan utamanya adalah memvisualisasikan dan membandingkan performa antara metode deteksi tabrakan **Brute Force** dengan metode **Quadtree**.
 <p>
